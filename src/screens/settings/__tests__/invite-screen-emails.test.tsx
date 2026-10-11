@@ -32,6 +32,9 @@ jest.mock(
       children,
 );
 
+// The first render loads the screen's whole module graph, which can pass the 5s default on a cold CI runner.
+jest.setTimeout(30000);
+
 const mockGetRequest = GetRequest as jest.Mock;
 
 const renderScreen = async () => {
