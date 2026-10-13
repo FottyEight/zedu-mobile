@@ -32,7 +32,8 @@ jobs:
             'BASE_URL=https://api.zedu.chat/api/v1' \
             'CONNECT_URL=wss://api.zedu.chat/centrifugo/connection/websocket' \
             'CLIENT_URL=https://zedu.chat' \
-            'ONESIGNAL_APP_ID=00000000-0000-0000-0000-000000000000' > .env
+            'ONESIGNAL_APP_ID=00000000-0000-0000-0000-000000000000' \
+            'GOOGLE_CLIENT_ID=placeholder.apps.googleusercontent.com' > .env
       - name: Build APK
         working-directory: android
         run: ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=x86_64
