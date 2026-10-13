@@ -1,0 +1,41 @@
+name: Screenshot APK
+
+# Temporary, personal-fork only: builds an x86_64 release APK of this branch so it can be
+# installed on an emulator for before/after screenshots. Not for any upstream PR.
+on:
+  push:
+    branches:
+      - "screenshot-*"
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+      - run: npm ci
+      - name: Write .env (public values, production API)
+        run: |
+          printf '%s\n' \
+            'API_URL=https://api.zedu.chat' \
+            'BASE_URL=https://api.zedu.chat/api/v1' \
+            'CONNECT_URL=wss://api.zedu.chat/centrifugo/connection/websocket' \
+            'CLIENT_URL=https://zedu.chat' > .env
+      - name: Build APK
+        working-directory: android
+        run: ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=x86_64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apk-${{ github.ref_name }}
+          path: android/app/build/outputs/apk/release/app-release.apk
